@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 
 url = 'https://www.loker.id/cari-lowongan-kerja?'
+site = 'https://www.loker.id/'
 params = {
     'q': 'web developer',
     'lokasi': 'jakarta',
@@ -44,5 +45,35 @@ def get_total_pages():
     total = int(max(total_pages))
     return total
 
+def get_all_items():
+    params = {
+        'q': 'web developer',
+        'lokasi': 'jakarta',
+        'category': '0',
+        'pendidikan': '0',
+    }
+    res = requests.get(url, params=params, headers=headers)
+    with open('temp/res.html', 'w+') as outfile:
+        outfile.write(res.text)
+        outfile.close()
+    soup = BeautifulSoup(res.text, 'html.parser')
+
+    # Scraping Process
+    contents = soup.find_all('div', 'm-b-40')
+
+    # Pick Items
+
+    for item in contents:
+        pkk = item.find('h2', 'media-heading h4')
+        title = pkk.text
+        try:
+            link = site + pkk.find('a')['href']
+        except:
+            link = 'Link Not Available'
+        print(link)
+
+
+
+
 if __name__ == '__main__':
-    get_total_pages()
+    get_all_items()
