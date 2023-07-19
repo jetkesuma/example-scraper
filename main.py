@@ -2,25 +2,21 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
-url = 'https://www.loker.id/cari-lowongan-kerja?'
-site = 'https://www.loker.id/'
+url = 'https://karirhub.kemnaker.go.id/vacancies/industrial?'
+site = 'https://glints.com/id/opportunities/'
 params = {
-    'q': 'web developer',
-    'lokasi': 'jakarta',
-    'category': '0',
-    'pendidikan': '0',
+    'keyword': 'marketing',
+    'region': 'DKI%20JAKARTA,%20Indonesia',
 }
 
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'}
 
 res = requests.get(url, params=params, headers=headers)
-
+print(res.status_code)
 def get_total_pages():
     params = {
-        'q': 'web developer',
-        'lokasi': 'jakarta',
-        'category': '0',
-        'pendidikan': '0',
+        'keyword': 'marketing',
+        'region': 'DKI%20JAKARTA,%20Indonesia',
     }
 
     res = requests.get(url, params=params, headers=headers)
@@ -37,7 +33,7 @@ def get_total_pages():
     total_pages = []
     # scraping Step
     soup = BeautifulSoup(res.text, 'html.parser')
-    pagination = soup.find('ul', 'pagination pagination-sm')
+    pagination = soup.find('div', 'pagination')
     pages = pagination.find_all('li')
     for page in pages:
         total_pages.append(page.text)
@@ -47,7 +43,7 @@ def get_total_pages():
 
 def get_all_items():
     params = {
-        'q': 'web developer',
+        'q': 'marketing',
         'lokasi': 'jakarta',
         'category': '0',
         'pendidikan': '0',
@@ -64,13 +60,9 @@ def get_all_items():
     # Pick Items
 
     for item in contents:
-        pkk = item.find('h2', 'media-heading h4')
-        title = pkk.text
-        try:
-            link = site + pkk.find('a')['href']
-        except:
-            link = 'Link Not Available'
-        print(link)
+        title = item.find('h2', 'media-heading h4').text
+        print(title)
+
 
 
 
