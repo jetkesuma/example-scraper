@@ -2,70 +2,23 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
-url = 'https://karirhub.kemnaker.go.id/vacancies/industrial?'
-site = 'https://glints.com/id/opportunities/'
-params = {
-    'keyword': 'marketing',
-    'region': 'DKI%20JAKARTA,%20Indonesia',
-}
+url = 'https://id.carousell.com/categories/computers-and-tablets-333'
 
-headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'}
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 '
+                  'Safari/537.36'}
 
-res = requests.get(url, params=params, headers=headers)
-print(res.status_code)
+res = requests.get(url, headers=headers)
+
+
 def get_total_pages():
-    params = {
-        'keyword': 'marketing',
-        'region': 'DKI%20JAKARTA,%20Indonesia',
-    }
-
-    res = requests.get(url, params=params, headers=headers)
-
-    try:
-        os.mkdir('temp')
-    except FileExistsError:
-        pass
-
-    with open('temp/res.html', 'w+') as outfile:
-        outfile.write(res.text)
-        outfile.close()
-
-    total_pages = []
-    # scraping Step
     soup = BeautifulSoup(res.text, 'html.parser')
-    pagination = soup.find('div', 'pagination')
-    pages = pagination.find_all('li')
-    for page in pages:
-        total_pages.append(page.text)
-
-    total = int(max(total_pages))
-    return total
-
-def get_all_items():
-    params = {
-        'q': 'marketing',
-        'lokasi': 'jakarta',
-        'category': '0',
-        'pendidikan': '0',
-    }
-    res = requests.get(url, params=params, headers=headers)
-    with open('temp/res.html', 'w+') as outfile:
-        outfile.write(res.text)
-        outfile.close()
-    soup = BeautifulSoup(res.text, 'html.parser')
-
-    # Scraping Process
-    contents = soup.find_all('div', 'm-b-40')
-
-    # Pick Items
-
-    for item in contents:
-        title = item.find('h2', 'media-heading h4').text
-        print(title)
-
-
-
+    laptop_best_match = soup.find(attrs={'class': 'D_Z asm-browse-listings'})
+    titles = laptop_best_match.findAll(attrs={'class': 'D_sZ D_BK'})
+    for title in titles:
+        print(title.find('p', attrs={
+            'class': 'D_qz M_kQ D_pl M_kE D_q_ M_kR D_qE M_kV D_qH M_kY D_qK M_lb D_qM M_le D_qI M_kZ D_qQ'}).text)
 
 
 if __name__ == '__main__':
-    get_all_items()
+    get_total_pages()
