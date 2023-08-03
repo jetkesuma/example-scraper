@@ -1,6 +1,8 @@
 import os
+import json
 import requests
 from bs4 import BeautifulSoup
+import pandas as pd
 
 url = 'https://www.realtor.com/realestateandhomes-search/Los-Angeles_CA/show-recently-sold/sby-6'
 
@@ -32,8 +34,24 @@ def get_total_pages():
             'adress': adrress
         }
         contents.append(data_dict)
-    print(f'Count Data: {len(contents)}')
 
+    # writing json file
+    try:
+        os.mkdir('json_result')
+    except FileExistsError:
+        pass
+
+    with open('json_result/recenty_sold.json', 'w+') as json_data:
+        json.dump(contents, json_data)
+    print('json data created')
+
+    # create csv
+    df = pd.DataFrame(contents)
+    df.to_csv('realtor_recent_sold.csv', index=False)
+    df.to_excel('realtor_recent_data.xlsx', index=False)
+
+    # data Created
+    print('Data Created Success')
 
 if __name__ == '__main__':
     get_total_pages()
